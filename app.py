@@ -6,13 +6,14 @@ from flask_jwt_extended import (
     jwt_required, get_jwt_identity
 )
 from flask_swagger_ui import get_swaggerui_blueprint
+from flask_cors import CORS
 import os
 
 ###############################################################################
 # FLASK APP CONFIG
 ###############################################################################
 app = Flask(__name__)
-
+CORS(app)
 # Database: SQLite stored in data.db
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 # JWT secret key (change this to a strong random value in production!)
@@ -114,6 +115,13 @@ def login():
 
     return jsonify({'message': 'Invalid credentials'}), 401
 
+@app.route('/users', methods=['GET'])
+def get_users():
+    """
+    Temporary route to fetch all users (for debugging).
+    """
+    users = User.query.all()
+    return jsonify([{'id': u.id, 'username': u.username} for u in users]), 200
 ###############################################################################
 # ITEM ROUTES (PROTECTED)
 ###############################################################################
